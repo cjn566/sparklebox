@@ -1,77 +1,68 @@
 #include "animations.h"
 
-
 // Variables
 uint8_t currentColor = 0; // intentionally 1 byte to roll over after 255
 int16_t speed = 1;
 
+// For settings and memory, these defines are setting the index 
+// Settings...
+#define SPEED 0
+static char const *SETTINGS_NAMES[] = {
+  "Speed"
+};
+uint8_t const NUMBER_OF_SETTINGS = 1;
 
-// Addresses for data in memory/settings
-// settings...
-#define SETTING_SPEED 0
-#define SETTING_SPEED_NAME "Speed"
-
-// memory...
-#define MEMORY_LAST_COLOR 0
+// Memory...
+#define LAST_COLOR 0          // this is the index of this value in `memories`
+#define INIT_LAST_COLOR 0     // this is the init/default value of this memory.
+#define NUMBER_OF_MEMORIES 1  // this is the total number of memories.
 
 
+void initMemory () {
+  // Set up the actual memory array.
+  float memories[NUMBER_OF_MEMORIES] = {
+    INIT_LAST_COLOR // with the init values
+  };
+  CurrentAnimation.memories = memories;
+}
 
 
+void animate () {
+  Serial.println("in Animators::ColorFade.animate ()");
 
-animation_struct_t ColorFade;
+  // OK - HERE'S WHAT TO DO NEXT!!!
+  // TRY TO GET THAT VALUE BACK OUT OF MEMORIES!!!
+  // MAKE SOME PIXELS!
 
-// Testing area...
-void AnimationSetUpFunctions::ColorFadeSetUp() {
-  ColorFade.name = "Color Fade";
+
+  // retrieve memory
+  // currentColor = CurrentAnimation.memory[MEMORY_LAST_COLOR];
+  // speed = CurrentAnimation.settings[SETTING_SPEED];
+  // currentColor += speed;
+
+
+  // do the animation
+  DrawingUtils::fillAllPixels (
+    // CHSV( currentColor, 255, 255 )
+    CHSV( 100, 255, 255 )
+  );
+
+  // store memory for next frame
+  // CurrentAnimation.memory[MEMORY_LAST_COLOR] = currentColor;
 }
 
 
 
-
-Animations::
-
-
-
+void AnimatorSetUpFunctions::ColorFadeSetUp () {
+  // we miiiiiiight not need this anymore...
+}
 
 
-// void init () {
-//   CurrentAnimation.memory[MEMORY_LAST_COLOR] = 0;
-// }
-
-// void animate () {
-//   // retrieve memory
-//   currentColor = CurrentAnimation.memory[MEMORY_LAST_COLOR];
-//   speed = CurrentAnimation.settings[SETTING_SPEED];
-//   currentColor += speed;
-
-//   // do the animation
-//   CHSV hsv( currentColor, 255, 255);
-//   AnimationUtils::fillAllPixels(hsv);
-
-//   // store memory for next frame
-//   CurrentAnimation.memory[MEMORY_LAST_COLOR] = currentColor;
-
-//   // currentColor = frameNumber % 255;
-
-//   // Serial.println("Color Fade!");
-//   // TODO - it would be really great if this could be called with just an array it dumps data into.
-//   // that way it wouldn't need to be aware of the whole shebang.
-// }
-
-// animation_struct_t Animations::ColorFade;
-// Animations::ColorFade.name = "Color Fade";
-
-// namespace Animations {
-
-  // TODO - do we want to wrap this in another layer of namespace? For
-  // instance, we could have a `ColorFade` namespace here with externs of
-  // `MemoryDefaults` and `Animator`?
-
-  // animation_struct_t ColorFade;
-
-  // ColorFade.fav_number = 3;
-  // ColorFade.name = "Color Fade";
-  // ColorFade.init = &init;
-  // ColorFade.animate = &animate;
-
-// }
+animator_struct_t Animators::ColorFade = {
+  "Color Fade",
+  NUMBER_OF_MEMORIES,
+  NUMBER_OF_SETTINGS,
+  SETTINGS_NAMES,
+  initMemory,
+  animate
+};
